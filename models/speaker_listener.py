@@ -6,14 +6,14 @@ class Speaker(nn.Module):
         super(Speaker, self).__init__()
         self.hidden_size = hidden_size
         self.embedding = nn.Embedding(input_size, hidden_size)
-        self.gru = nn.GRU(hidden_size, hidden_size)
+        self.gru = nn.GRU(hidden_size, hidden_size, batch_first=True)
         self.out = nn.Linear(hidden_size, output_size)
         self.softmax = nn.LogSoftmax(dim=1)
 
     def forward(self, input_sentence, hidden):
         embedded = self.embedding(input_sentence)
         output, hidden = self.gru(embedded, hidden)
-        output = self.softmax(self.out(output[0]))
+        output = self.softmax(self.out(output))
         return output, hidden
 
 
@@ -22,12 +22,12 @@ class Listener(nn.Module):
         super(Listener, self).__init__()
         self.hidden_size = hidden_size
         self.embedding = nn.Embedding(input_size, hidden_size)
-        self.gru = nn.GRU(hidden_size, hidden_size)
+        self.gru = nn.GRU(hidden_size, hidden_size, batch_first=True)
         self.out = nn.Linear(hidden_size, output_size)
         self.softmax = nn.LogSoftmax(dim=1)
 
     def forward(self, input_sentence, hidden):
         output = self.embedding(input_sentence)
         output, hidden = self.gru(output, hidden)
-        output = self.softmax(self.out(output[0]))
+        output = self.softmax(self.out(output))
         return output, hidden
