@@ -6,6 +6,8 @@ import torch.nn.functional as F
 def reward(sample, target, board):
     try:
         board.push_san(sample)
+        if board.is_checkmate():
+            return 10
         if sample == target:
             return 2
         return 1

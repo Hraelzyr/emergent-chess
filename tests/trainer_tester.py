@@ -14,13 +14,16 @@ class MyTestCase(unittest.TestCase):
         correct_not_match = reward("e4", "d4", self.board)
         self.board.reset()
         incorrect_move = reward("e5", "e4", self.board)
+        self.board.set_board_fen("8/8/8/8/8/K7/7Q/k7")
+        mate = reward("Qb2#", "Qb2#", self.board)
         self.assertGreater(correct_match, correct_not_match)
         self.assertLess(incorrect_move, 0)
         self.assertGreater(correct_not_match, 0)
+        self.assertGreater(mate, correct_match)
 
     def test_actor_loss_fn(self):
         advantage = torch.tensor([1, 2, 3])
-        log_probs = torch.tensor([[0.1, 0.2, 0.3], [0.4, 0.5, 0.6], [0.7, 0.8, 0.9]])
+        log_probs = torch.log(torch.tensor([[0.1, 0.2, 0.3], [0.4, 0.5, 0.6], [0.7, 0.8, 0.9]]))
         sample = torch.tensor([0, 1, 2])
         loss = actor_loss_fn(advantage, log_probs, sample)
         self.assertEqual(loss.shape, (3,))
